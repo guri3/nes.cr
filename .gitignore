@@ -1,0 +1,9 @@
+/bin/
+/lib/
+shard.lock
+
+/nes
+*.dwarf
+output.png
+
+.DS_Store

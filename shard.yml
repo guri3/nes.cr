@@ -1,0 +1,20 @@
+name: nes.cr
+version: 0.1.0
+
+authors:
+  - Daiki Oguri <aloesquash.lock@gmail.com>
+
+description: |
+  NES(Nintendo Entertainment System) emulator written in Crystal 💎
+
+dependencies:
+  stumpy_png:
+    github: stumpycr/stumpy_png
+    version: "~> 4.5"
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 0.12.0
+
+license: MIT
