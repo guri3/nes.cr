@@ -77,7 +77,7 @@ class Cpu
       addr_or_data = self.fetch_word(@register.pc).to_u16
       addr = self.read(
         addr_or_data).to_u16 + (self.read(addr_or_data & 0xff00 | ((addr_or_data & 0x00ff) + 1) & 0xFF) << 8
-      )
+        )
       [addr, 0]
     else
       [0_u16, 0]

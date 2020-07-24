@@ -22,6 +22,7 @@ class Ppu
   @sprites : Array(SpriteWithAttribute)
   @palette : Palette
   @interrupts : Interrupts
+
   # @is_horizontal_scroll : Bool
   # @scroll_x : Byte
   # @scroll_y : Byte
@@ -40,13 +41,13 @@ class Ppu
     @sprite_ram_addr = 0x0000
     @background = [] of Tile
     @sprites = [] of SpriteWithAttribute
-    @palette = Palette.new()
+    @palette = Palette.new
     # @is_horizontal_scroll = true
     # @scroll_x = 0
     # @scroll_y = 0
   end
 
-  def run(cycle : Int32) RenderingData | Nil
+  def run(cycle : Int32) : RenderingData | Nil
     @cycle += cycle
     if @line == 0
       @background.clear
@@ -57,7 +58,7 @@ class Ppu
       @line += 1
 
       # if self.has_sprite_hit
-        # self.set_sprite_hit
+      # self.set_sprite_hit
       # end
 
       if @line <= 240 && @line % 8 == 0
@@ -67,7 +68,7 @@ class Ppu
       if @line == 241
         # self.set_v_blank
         # if self.has_vblank_irq_enabled
-          # @interrupts.assert_nmi
+        # @interrupts.assert_nmi
         # end
       end
 
@@ -219,7 +220,7 @@ class Ppu
   end
 
   private def build_sprite(sprite_id : Byte, offset : Word) : Sprite
-    sprite = (0..8).map {|_| [0_u8, 0_u8, 0_u8, 0_u8, 0_u8, 0_u8, 0_u8, 0_u8]}
+    sprite = (0..8).map { |_| [0_u8, 0_u8, 0_u8, 0_u8, 0_u8, 0_u8, 0_u8, 0_u8] }
     (0...16).each do |i|
       (0...8).each do |j|
         addr = sprite_id.to_u16 * 16 + i + offset
@@ -250,48 +251,48 @@ class Ppu
 
   # 以下、hello.nesの描画には未使用
 
-#   def build_sprites
-#     offset = (@registers[0] & 0x08) == 0x01 ? 0x1000 : 0x0000
-#     i = 0_u16
-#     while i < SPRITES_NUMBER
-#       y = @sprite_ram.read(i).to_i32
-#       # next if y < 0
-#       sprite_id = @sprite_ram.read(i + 1)
-#       attr = @sprite_ram.read(i + 2)
-#       x = @sprite_ram.read(i + 3)
-#       sprite = self.build_sprite(sprite_id, offset.to_u16)
-#       @sprites.push(SpriteWithAttribute.new(sprite, x, y.to_u8, attr, sprite_id))
-#       i += 4
-#     end
-#   end
+  #   def build_sprites
+  #     offset = (@registers[0] & 0x08) == 0x01 ? 0x1000 : 0x0000
+  #     i = 0_u16
+  #     while i < SPRITES_NUMBER
+  #       y = @sprite_ram.read(i).to_i32
+  #       # next if y < 0
+  #       sprite_id = @sprite_ram.read(i + 1)
+  #       attr = @sprite_ram.read(i + 2)
+  #       x = @sprite_ram.read(i + 3)
+  #       sprite = self.build_sprite(sprite_id, offset.to_u16)
+  #       @sprites.push(SpriteWithAttribute.new(sprite, x, y.to_u8, attr, sprite_id))
+  #       i += 4
+  #     end
+  #   end
 
-#   private def has_sprite_hit : Bool
-#     y = @sprite_ram.read(0x0000)
-#     y == @line && self.is_background_enable && self.is_sprite_enable
-#   end
+  #   private def has_sprite_hit : Bool
+  #     y = @sprite_ram.read(0x0000)
+  #     y == @line && self.is_background_enable && self.is_sprite_enable
+  #   end
 
-#   private def set_sprite_hit
-#     @registers[2] |= 0x40
-#   end
+  #   private def set_sprite_hit
+  #     @registers[2] |= 0x40
+  #   end
 
-#   private def has_vblank_irq_enabled : Bool
-#     (@registers[0] & 0x80) != 0
-#   end
+  #   private def has_vblank_irq_enabled : Bool
+  #     (@registers[0] & 0x80) != 0
+  #   end
 
-#   private def transfer_sprite(index : UInt8, data : UInt8)
-#     addr = index + @sprite_ram_addr
-#     @sprite_ram.write(addr.to_u16 % 0x100, data)
-#   end
+  #   private def transfer_sprite(index : UInt8, data : UInt8)
+  #     addr = index + @sprite_ram_addr
+  #     @sprite_ram.write(addr.to_u16 % 0x100, data)
+  #   end
 
-#   private def set_v_blank
-#     @registers[0x02] |= 0x80
-#   end
+  #   private def set_v_blank
+  #     @registers[0x02] |= 0x80
+  #   end
 
-#   private def clear_vblank
-#     @registers[0x02] &= 0x7f
-#   end
+  #   private def clear_vblank
+  #     @registers[0x02] &= 0x7f
+  #   end
 
-#   private def clear_sprite_hit
-#     @registers[0x02] &= 0xbf
-#   end
+  #   private def clear_sprite_hit
+  #     @registers[0x02] &= 0xbf
+  #   end
 end

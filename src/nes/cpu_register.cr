@@ -11,14 +11,14 @@ class CpuRegister
     @x = 0x00
     @y = 0x00
     @p = {
-      "negative" => false,
-      "overflow" => false,
-      "reserved" => true,
-      "break" => true,
-      "decimal" => false,
+      "negative"  => false,
+      "overflow"  => false,
+      "reserved"  => true,
+      "break"     => true,
+      "decimal"   => false,
       "interrupt" => true,
-      "zero" => false,
-      "carry" => false,
+      "zero"      => false,
+      "carry"     => false,
     }
     @sp = 0x01FD
     @pc = 0x0000

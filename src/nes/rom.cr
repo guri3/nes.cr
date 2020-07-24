@@ -7,7 +7,7 @@ class Rom
     @rom.size
   end
 
-  def read(addr : UInt16) UInt8
+  def read(addr : UInt16) : UInt8
     @rom[addr]
   end
 end

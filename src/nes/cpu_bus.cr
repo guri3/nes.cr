@@ -2,6 +2,7 @@ require "./types"
 require "./ram"
 require "./rom"
 require "./ppu"
+
 # require "./dma"
 # require "./keypad"
 # require "./apu"
@@ -37,7 +38,7 @@ class CpuBus
 
   def write_by_cpu(addr : Word, data : Byte)
     if addr < 0x0800 # RAM
-      @ram.write(addr, data);
+      @ram.write(addr, data)
     elsif addr < 0x2000 # RAM mirror
       @ram.write(addr - 0x0800, data)
     elsif addr < 0x2008 # PPU
