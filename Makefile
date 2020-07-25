@@ -8,4 +8,4 @@ build:
 	crystal build src/nes.cr
 
 lint:
-	./lib/ameba/bin/ameba
+	./bin/ameba

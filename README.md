@@ -8,8 +8,7 @@ NES(Nintendo Entertainment System) emulator written in Crystal 💎
 $ git clone git@github.com:guri3/nes.cr.git
 $ cd nes.cr
 $ make setup
-$ make build
-$ ./nes
+$ make run
 ```
 
 ## Screenshot
