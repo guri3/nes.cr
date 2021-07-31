@@ -11,6 +11,12 @@ dependencies:
   stumpy_png:
     github: stumpycr/stumpy_png
     version: "~> 4.5"
+  crsfml:
+    github: oprypin/crsfml
+  imgui:
+    github: oprypin/crystal-imgui
+  imgui-sfml:
+    github: oprypin/crystal-imgui-sfml
 
 development_dependencies:
   ameba:
