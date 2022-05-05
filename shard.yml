@@ -13,10 +13,6 @@ dependencies:
     version: "~> 5.0.1"
   crsfml:
     github: oprypin/crsfml
-  imgui:
-    github: oprypin/crystal-imgui
-  imgui-sfml:
-    github: oprypin/crystal-imgui-sfml
 
 development_dependencies:
   ameba:
