@@ -4,11 +4,9 @@ require "crsfml"
 window = SF::RenderWindow.new(SF::VideoMode.new(256, 240), "nes.cr")
 window.framerate_limit = 60
 
-vertices = [
-  SF::Vertex.new(SF.vector2f(0, 0), SF::Color::Red, SF.vector2f(0, 0)),
-  SF::Vertex.new(SF.vector2f(0, 100), SF::Color::Red, SF.vector2f(0, 10)),
-  SF::Vertex.new(SF.vector2f(100, 100), SF::Color::Red, SF.vector2f(10, 10)),
-  SF::Vertex.new(SF.vector2f(100, 0), SF::Color::Red, SF.vector2f(10, 0)),
+points = [
+  SF::Vertex.new(SF.vector2f(10, 10), SF::Color::Red),
+  SF::Vertex.new(SF.vector2f(20, 20), SF::Color::Red),
 ]
 
 while window.open?
@@ -17,7 +15,7 @@ while window.open?
       window.close
     end
   end
-  window.draw(vertices, SF::Quads)
+  window.draw(points, SF::Points)
   window.display
 end
 
