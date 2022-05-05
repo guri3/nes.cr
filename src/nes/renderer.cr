@@ -1,5 +1,6 @@
 require "stumpy_png"
 require "./types"
+require "crsfml"
 
 include StumpyPNG
 
@@ -31,7 +32,7 @@ class Renderer
 
   def render(data : RenderingData)
     self.render_background(data.background, data.palette)
-    self.render_image(@image_data)
+    return self.get_points
   end
 
   def render_background(background : Array(Tile) | Nil, palette : PaletteRam)
@@ -73,5 +74,17 @@ class Renderer
     end
 
     StumpyPNG.write(canvas, "output.png")
+  end
+
+  def get_points : Array(SF::Vertex)
+    points = [] of SF::Vertex
+    (0...240).each do |y|
+      (0...256).each do |x|
+        index = (x + (y * 0x0100)) * 3
+        color = SF::Color.new(@image_data[index], @image_data[index + 1], @image_data[index + 2])
+        points << SF::Vertex.new(SF.vector2f(x, y), color)
+      end
+    end
+    return points
   end
 end

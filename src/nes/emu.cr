@@ -35,14 +35,27 @@ class Emu
   end
 
   def run
+    window = SF::RenderWindow.new(SF::VideoMode.new(256, 240), "nes.cr")
+    window.framerate_limit = 60
+    points = [] of SF::Vertex
+
     loop do
       cycle = 0
       cycle += @cpu.run
       rendering_data = @ppu.run(cycle * 3)
       if rendering_data
-        @renderer.render(rendering_data)
-        break # only hello.rom
+        points = @renderer.render(rendering_data)
+        break
       end
+    end
+    while window.open?
+      while event = window.poll_event
+        if event.is_a? SF::Event::Closed
+          window.close
+        end
+      end
+      window.draw(points, SF::Points)
+      window.display
     end
   end
 end
