@@ -7,6 +7,10 @@ authors:
 description: |
   NES(Nintendo Entertainment System) emulator written in Crystal 💎
 
+targets:
+  nes.cr:
+    main: src/nes.cr
+
 dependencies:
   stumpy_png:
     github: stumpycr/stumpy_png
