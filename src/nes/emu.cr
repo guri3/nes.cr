@@ -39,19 +39,19 @@ class Emu
     window.framerate_limit = 60
     points = [] of SF::Vertex
 
-    loop do
-      cycle = 0
-      cycle += @cpu.run
-      rendering_data = @ppu.run(cycle * 3)
-      if rendering_data
-        points = @renderer.render(rendering_data)
-        break
-      end
-    end
     while window.open?
       while event = window.poll_event
         if event.is_a? SF::Event::Closed
           window.close
+        end
+      end
+      loop do
+        cycle = 0
+        cycle += @cpu.run
+        rendering_data = @ppu.run(cycle * 3)
+        if rendering_data
+          points = @renderer.render(rendering_data)
+          break
         end
       end
       window.draw(points, SF::Points)
