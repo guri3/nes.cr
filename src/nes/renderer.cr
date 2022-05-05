@@ -30,9 +30,9 @@ class Renderer
     @image_data = Array.new(256 * 240 * 3, 0_u8)
   end
 
-  def render(data : RenderingData)
+  def render(data : RenderingData) : Array(SF::Vertex)
     self.render_background(data.background, data.palette)
-    return self.get_points
+    self.get_points
   end
 
   def render_background(background : Array(Tile) | Nil, palette : PaletteRam)
@@ -85,6 +85,6 @@ class Renderer
         points << SF::Vertex.new(SF.vector2f(x, y), color)
       end
     end
-    return points
+    points
   end
 end
