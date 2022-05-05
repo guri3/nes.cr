@@ -250,7 +250,6 @@ class Ppu
   end
 
   # 以下、hello.nesの描画には未使用
-
   #   def build_sprites
   #     offset = (@registers[0] & 0x08) == 0x01 ? 0x1000 : 0x0000
   #     i = 0_u16

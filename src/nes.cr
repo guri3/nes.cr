@@ -1,4 +1,5 @@
 require "./nes/emu"
+require "crsfml"
 
 nes_file = File.new("roms/hello.nes")
 buf = Bytes.new(nes_file.size)

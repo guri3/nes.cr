@@ -11,6 +11,8 @@ dependencies:
   stumpy_png:
     github: stumpycr/stumpy_png
     version: "~> 5.0.1"
+  crsfml:
+    github: oprypin/crsfml
 
 development_dependencies:
   ameba:
