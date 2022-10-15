@@ -10,6 +10,7 @@ class Logger
   end
 
   def logging(register : CpuRegister, base_name : String, mode : String, cycle : Int32)
-    @file.puts "#{register.pc.to_s(16)} #{base_name} #{mode}  A:#{register.a} X:#{register.x} Y:#{register.y} SP:#{register.sp} CYC: #{cycle}"
+    log_row = sprintf("%04X %s %s A:%02X X:%02X Y:%02X SP:%02X CYC:%d", register.pc, base_name, mode, register.a, register.x, register.y, register.sp - 0x0100, cycle)
+    @file.puts log_row
   end
 end
