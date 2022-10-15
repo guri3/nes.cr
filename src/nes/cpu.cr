@@ -137,6 +137,11 @@ class Cpu
       @register.p["zero"] = @register.y == 0
     when "JMP"
       @register.pc = opeland
+    when "JSR"
+      pc = @register.pc - 1
+      push (pc >> 8 & 0xFF).to_u8
+      push (pc & 0xFF).to_u8
+      @register.pc = opeland
     when "BNE"
       self.branch(opeland) if !@register.p["zero"]
     when "SEI"
