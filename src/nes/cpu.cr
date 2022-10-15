@@ -2,22 +2,25 @@ require "./types"
 require "./cpu_bus"
 require "./cpu_const"
 require "./cpu_register"
+require "../utils/logger"
 
 class Cpu
   @bus : CpuBus
   @register : CpuRegister
   @has_branched : Bool
+  @logger : Logger
 
   def initialize(bus : CpuBus)
     @bus = bus
     @register = CpuRegister.new
     @has_branched = false
+    @logger = Logger.new
   end
 
   def reset
     # @register.pc = self.read(0xFFFC).to_u16 || 0x8000_u16
     # TODO: レジスタの初期化
-    @register.pc = 0x8000_u16
+    @register.pc = 0xC000
   end
 
   def run : Int32
@@ -25,7 +28,9 @@ class Cpu
     base_name, mode, cycle = OPELAND_DICT[opecode]
     opeland, additional_cycle = self.get_opeland_with_additional_cycle(mode.as(String))
     self.exec(base_name.as(String), opeland.as(UInt16), mode.as(String))
-    cycle.as(Int32) + additional_cycle + (@has_branched ? 1 : 0)
+    result_cycle = cycle.as(Int32) + additional_cycle + (@has_branched ? 1 : 0)
+    @logger.logging(@register, base_name.as(String), mode.as(String), cycle.as(Int32))
+    result_cycle
   end
 
   private def fetch(addr : Word) : Byte
