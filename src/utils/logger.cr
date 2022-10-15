@@ -2,6 +2,7 @@ require "../nes/cpu_register"
 
 class Logger
   property register : CpuRegister = CpuRegister.new
+  property pc : Int32 = 0
   property cycle : Int32 = 7
   property opecode : UInt8 = 0x00
   property base_name : String = ""
@@ -17,7 +18,7 @@ class Logger
   end
 
   def logging
-    log_row = sprintf("%04X  %02X %02X %02X  %s  A:%02X X:%02X Y:%02X P:%02X SP:%02X CYC:%d", @register.pc, @opecode, opeland_lower, opeland_upper, base_name, @register.a, @register.x, @register.y, status_to_u8, @register.sp - 0x0100, @cycle)
+    log_row = sprintf("%04X  %02X %02X %02X  %s  A:%02X X:%02X Y:%02X P:%02X SP:%02X CYC:%d", pc, @opecode, opeland_lower, opeland_upper, base_name, @register.a, @register.x, @register.y, status_to_u8, @register.sp - 0x0100, @cycle)
     @file.puts log_row
   end
 

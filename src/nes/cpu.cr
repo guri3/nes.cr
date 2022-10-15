@@ -25,6 +25,7 @@ class Cpu
 
   def run(original_cycle : Int32) : Int32
     @logger.register = @register
+    @logger.pc = @register.pc
     opecode = self.fetch(@register.pc)
     @logger.opecode = opecode
     base_name, mode, cycle = OPELAND_DICT[opecode]
