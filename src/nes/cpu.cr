@@ -23,14 +23,19 @@ class Cpu
     @register.pc = 0xC000
   end
 
-  def run : Int32
+  def run(original_cycle : Int32) : Int32
+    @logger.register = @register
     opecode = self.fetch(@register.pc)
+    @logger.opecode = opecode
     base_name, mode, cycle = OPELAND_DICT[opecode]
+    @logger.base_name = base_name.as(String)
+    @logger.mode = mode.as(String)
     opeland, additional_cycle = self.get_opeland_with_additional_cycle(mode.as(String))
+    @logger.opeland = opeland.as(UInt16)
+    @logger.logging
+    @logger.cycle += cycle.as(Int32)
     self.exec(base_name.as(String), opeland.as(UInt16), mode.as(String))
-    result_cycle = cycle.as(Int32) + additional_cycle + (@has_branched ? 1 : 0)
-    @logger.logging(@register, base_name.as(String), mode.as(String), cycle.as(Int32))
-    result_cycle
+    cycle.as(Int32) + additional_cycle + (@has_branched ? 1 : 0)
   end
 
   private def fetch(addr : Word) : Byte

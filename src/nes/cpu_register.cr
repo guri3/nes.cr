@@ -14,7 +14,7 @@ class CpuRegister
       "negative"  => false,
       "overflow"  => false,
       "reserved"  => true,
-      "break"     => true,
+      "break"     => false,
       "decimal"   => false,
       "interrupt" => true,
       "zero"      => false,
