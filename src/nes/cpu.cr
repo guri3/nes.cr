@@ -110,25 +110,31 @@ class Cpu
       @register.p["negative"] = @register.x & 0x80 != 0
       @register.p["zero"] = @register.x == 0
     when "STA"
-      self.write(opeland, @register.a)
+      write(opeland, @register.a)
+    when "STX"
+      write(opeland, @register.x)
+    when "STY"
+      write(opeland, @register.y)
     when "TXS"
       @register.sp = @register.x.to_u16 + 0x0100
     when "TYA"
       @register.a = @register.y
       @register.p["negative"] = @register.a & 0x80 != 0
       @register.p["zero"] = @register.a == 0
+    when "PHA"
+      push @register.a
+    when "PLA"
+      @register.a = pop
+    when "PHP"
+      push @register.status_to_u8
+    when "PLP"
+      @register.set_status_from_u8 pop
     when "AND"
       data = mode == "immediate" ? opeland : self.read(opeland)
       operated = data & @register.a
       @register.p["negative"] = operated & 0x80 != 0
       @register.p["zero"] = operated == 0
       @register.a = operated.to_u8 & 0xff
-    when "BCC"
-      branch opeland unless @register.p["carry"]
-    when "BCS"
-      branch opeland if @register.p["carry"]
-    when "BEQ"
-      branch opeland if @register.p["zero"]
     when "DEY"
       @register.y = @register.y - 0x01
       @register.p["negative"] = @register.y & 0x80 != 0
@@ -145,6 +151,37 @@ class Cpu
       @register.p["carry"] = false
     when "SEC"
       @register.p["carry"] = true
+    when "CLI"
+      @register.p["interrupt"] = false
+    when "SEI"
+      @register.p["interrupt"] = true
+    when "CLD"
+      @register.p["decimal"] = false
+    when "SED"
+      @register.p["decimal"] = true
+    when "CLV"
+      @register.p["overflow"] = false
+    when "BCC"
+      branch opeland unless @register.p["carry"]
+    when "BCS"
+      branch opeland if @register.p["carry"]
+    when "BNE"
+      branch opeland unless @register.p["zero"]
+    when "BEQ"
+      branch opeland if @register.p["zero"]
+    when "BVC"
+      branch opeland unless @register.p["overflow"]
+    when "BVS"
+      branch opeland if @register.p["overflow"]
+    when "BPL"
+      branch opeland unless @register.p["negative"]
+    when "BMI"
+      branch opeland if @register.p["negative"]
+    when "BIT"
+      data = read(opeland)
+      @register.p["zero"] = @register.a & data == 0
+      @register.p["negative"] = data & 0x80 != 0
+      @register.p["overflow"] = data & 0x40 != 0
     when "JMP"
       @register.pc = opeland
     when "JSR"
@@ -153,14 +190,10 @@ class Cpu
       push (pc & 0xFF).to_u8
       @register.pc = opeland
     when "RTS"
-      lower_pc = pop
-      upper_pc = pop
+      lower_pc = pop.to_u16
+      upper_pc = pop.to_u16
       @register.pc = upper_pc << 8 | lower_pc
       @register.pc += 1
-    when "BNE"
-      self.branch(opeland) if !@register.p["zero"]
-    when "SEI"
-      @register.p["interrupt"] = true
     when "BRK"
       interrupt = @register.p["interrupt"]
       @register.pc += 0x0001
