@@ -142,6 +142,11 @@ class Cpu
       push (pc >> 8 & 0xFF).to_u8
       push (pc & 0xFF).to_u8
       @register.pc = opeland
+    when "RTS"
+      lower_pc = pop & 0xFF
+      upper_pc = pop & 0xFF
+      @register.pc = upper_pc << 8 | lower_pc
+      @register.pc += 1
     when "BNE"
       self.branch(opeland) if !@register.p["zero"]
     when "SEI"
@@ -182,6 +187,11 @@ class Cpu
   private def push(data : UInt8)
     self.write((0x0100_u16 | (@register.sp & 0xff)), data)
     @register.sp = @register.sp - 1
+  end
+
+  private def pop : UInt16
+    @register.sp += 1
+    read_word(0x0100_u16 | (@register.sp & 0xFF))
   end
 
   private def push_status
