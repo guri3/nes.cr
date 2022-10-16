@@ -2,28 +2,39 @@ require "./types"
 require "./cpu_bus"
 require "./cpu_const"
 require "./cpu_register"
+require "../utils/logger"
 
 class Cpu
   @bus : CpuBus
   @register : CpuRegister
   @has_branched : Bool
+  @logger : Logger
 
   def initialize(bus : CpuBus)
     @bus = bus
     @register = CpuRegister.new
     @has_branched = false
+    @logger = Logger.new
   end
 
   def reset
     # @register.pc = self.read(0xFFFC).to_u16 || 0x8000_u16
     # TODO: レジスタの初期化
-    @register.pc = 0x8000_u16
+    @register.pc = 0xC000
   end
 
-  def run : Int32
+  def run(original_cycle : Int32) : Int32
+    @logger.register = @register
+    @logger.pc = @register.pc
     opecode = self.fetch(@register.pc)
+    @logger.opecode = opecode
     base_name, mode, cycle = OPELAND_DICT[opecode]
+    @logger.base_name = base_name.as(String)
+    @logger.mode = mode.as(String)
     opeland, additional_cycle = self.get_opeland_with_additional_cycle(mode.as(String))
+    @logger.opeland = opeland.as(UInt16)
+    @logger.logging
+    @logger.cycle += cycle.as(Int32)
     self.exec(base_name.as(String), opeland.as(UInt16), mode.as(String))
     cycle.as(Int32) + additional_cycle + (@has_branched ? 1 : 0)
   end
@@ -99,13 +110,25 @@ class Cpu
       @register.p["negative"] = @register.x & 0x80 != 0
       @register.p["zero"] = @register.x == 0
     when "STA"
-      self.write(opeland, @register.a)
+      write(opeland, @register.a)
+    when "STX"
+      write(opeland, @register.x)
+    when "STY"
+      write(opeland, @register.y)
     when "TXS"
       @register.sp = @register.x.to_u16 + 0x0100
     when "TYA"
       @register.a = @register.y
       @register.p["negative"] = @register.a & 0x80 != 0
       @register.p["zero"] = @register.a == 0
+    when "PHA"
+      push @register.a
+    when "PLA"
+      @register.a = pop
+    when "PHP"
+      push @register.status_to_u8
+    when "PLP"
+      @register.set_status_from_u8 pop
     when "AND"
       data = mode == "immediate" ? opeland : self.read(opeland)
       operated = data & @register.a
@@ -124,12 +147,53 @@ class Cpu
       @register.y = @register.y + 0x01
       @register.p["negative"] = @register.y & 0x80 != 0
       @register.p["zero"] = @register.y == 0
-    when "JMP"
-      @register.pc = opeland
-    when "BNE"
-      self.branch(opeland) if !@register.p["zero"]
+    when "CLC"
+      @register.p["carry"] = false
+    when "SEC"
+      @register.p["carry"] = true
+    when "CLI"
+      @register.p["interrupt"] = false
     when "SEI"
       @register.p["interrupt"] = true
+    when "CLD"
+      @register.p["decimal"] = false
+    when "SED"
+      @register.p["decimal"] = true
+    when "CLV"
+      @register.p["overflow"] = false
+    when "BCC"
+      branch opeland unless @register.p["carry"]
+    when "BCS"
+      branch opeland if @register.p["carry"]
+    when "BNE"
+      branch opeland unless @register.p["zero"]
+    when "BEQ"
+      branch opeland if @register.p["zero"]
+    when "BVC"
+      branch opeland unless @register.p["overflow"]
+    when "BVS"
+      branch opeland if @register.p["overflow"]
+    when "BPL"
+      branch opeland unless @register.p["negative"]
+    when "BMI"
+      branch opeland if @register.p["negative"]
+    when "BIT"
+      data = read(opeland)
+      @register.p["zero"] = @register.a & data == 0
+      @register.p["negative"] = data & 0x80 != 0
+      @register.p["overflow"] = data & 0x40 != 0
+    when "JMP"
+      @register.pc = opeland
+    when "JSR"
+      pc = @register.pc - 1
+      push (pc >> 8 & 0xFF).to_u8
+      push (pc & 0xFF).to_u8
+      @register.pc = opeland
+    when "RTS"
+      lower_pc = pop.to_u16
+      upper_pc = pop.to_u16
+      @register.pc = upper_pc << 8 | lower_pc
+      @register.pc += 1
     when "BRK"
       interrupt = @register.p["interrupt"]
       @register.pc += 0x0001
@@ -166,6 +230,11 @@ class Cpu
   private def push(data : UInt8)
     self.write((0x0100_u16 | (@register.sp & 0xff)), data)
     @register.sp = @register.sp - 1
+  end
+
+  private def pop : UInt8
+    @register.sp += 1
+    read(0x0100_u16 | (@register.sp & 0xFF))
   end
 
   private def push_status

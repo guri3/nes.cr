@@ -47,7 +47,7 @@ class Emu
       end
       loop do
         cycle = 0
-        cycle += @cpu.run
+        cycle += @cpu.run(cycle)
         rendering_data = @ppu.run(cycle * 3)
         if rendering_data
           points = @renderer.render(rendering_data)
