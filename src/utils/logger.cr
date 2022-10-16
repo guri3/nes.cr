@@ -19,8 +19,8 @@ class Logger
   end
 
   def logging
-    # log_row = sprintf("%04X  %02X %02X %02X  %s  A:%02X X:%02X Y:%02X P:%02X SP:%02X CYC:%d", pc, @opecode, opeland_lower, opeland_upper, base_name, @register.a, @register.x, @register.y, status_to_u8, @register.sp - 0x0100, @cycle)
-    log_row = sprintf("A:%02X X:%02X Y:%02X P:%02X SP:%02X CYC:%d", @register.a, @register.x, @register.y, status_to_u8, @register.sp - 0x0100, @cycle)
+    log_row = sprintf("%04X  %02X %02X %02X  %s  A:%02X X:%02X Y:%02X P:%02X SP:%02X CYC:%d", pc, @opecode, opeland_lower, opeland_upper, base_name, @register.a, @register.x, @register.y, status_to_u8, @register.sp - 0x0100, @cycle)
+    # log_row = sprintf("A:%02X X:%02X Y:%02X P:%02X SP:%02X CYC:%d", @register.a, @register.x, @register.y, status_to_u8, @register.sp - 0x0100, @cycle)
     @file.puts log_row
   end
 
