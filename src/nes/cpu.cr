@@ -123,6 +123,12 @@ class Cpu
       @register.p["negative"] = operated & 0x80 != 0
       @register.p["zero"] = operated == 0
       @register.a = operated.to_u8 & 0xff
+    when "BCC"
+      branch opeland unless @register.p["carry"]
+    when "BCS"
+      branch opeland if @register.p["carry"]
+    when "BEQ"
+      branch opeland if @register.p["zero"]
     when "DEY"
       @register.y = @register.y - 0x01
       @register.p["negative"] = @register.y & 0x80 != 0
@@ -135,6 +141,10 @@ class Cpu
       @register.y = @register.y + 0x01
       @register.p["negative"] = @register.y & 0x80 != 0
       @register.p["zero"] = @register.y == 0
+    when "CLC"
+      @register.p["carry"] = false
+    when "SEC"
+      @register.p["carry"] = true
     when "JMP"
       @register.pc = opeland
     when "JSR"
@@ -143,8 +153,8 @@ class Cpu
       push (pc & 0xFF).to_u8
       @register.pc = opeland
     when "RTS"
-      lower_pc = pop & 0xFF
-      upper_pc = pop & 0xFF
+      lower_pc = pop
+      upper_pc = pop
       @register.pc = upper_pc << 8 | lower_pc
       @register.pc += 1
     when "BNE"
@@ -189,9 +199,9 @@ class Cpu
     @register.sp = @register.sp - 1
   end
 
-  private def pop : UInt16
+  private def pop : UInt8
     @register.sp += 1
-    read_word(0x0100_u16 | (@register.sp & 0xFF))
+    read(0x0100_u16 | (@register.sp & 0xFF))
   end
 
   private def push_status

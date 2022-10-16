@@ -13,8 +13,9 @@ describe "Nestest" do
   end
 
   it "CPUの状態がnestest.logと一致すること" do
-    File.read_lines("logs/nestest.log").each_with_index do |line, i|
-      File.read_lines("spec/data/nestest.log").each_with_index do |expected_line, j|
+    puts
+    File.read_lines("logs/nestest.log").each_with_index(1) do |line, i|
+      File.read_lines("spec/data/nestest.log").each_with_index(1) do |expected_line, j|
         if i == j
           puts "line: #{i}"
           line.should eq(expected_line)
